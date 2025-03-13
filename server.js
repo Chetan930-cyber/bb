@@ -23,6 +23,10 @@ app.use(cors({
     credentials: true, // Allow cookies or credentials
 }));
 
+// 🛠️ Handle Preflight Requests
+app.options('*', cors());
+
+// Parse JSON requests
 app.use(express.json());
 
 // ✅ MongoDB Connection
