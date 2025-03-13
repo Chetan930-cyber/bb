@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const app = express();
 
-// 🛠️ CORS FIX - Multiple Frontend URLs Allowed
+// 🛠️ CORS Configuration - Multiple Frontend URLs Allowed
 const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:5173'];
 
 app.use(cors({
@@ -16,10 +16,11 @@ app.use(cors({
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
+            console.error('CORS Error: Origin not allowed ->', origin);
             callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: true,
+    credentials: true, // Allow cookies or credentials
 }));
 
 app.use(express.json());
@@ -46,13 +47,10 @@ app.post('/register', async (req, res) => {
 
         res.json({ message: '✅ User Registered Successfully' });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: '❌ Internal Server Error' });
     }
 });
-app.get('/', (req, res) => {
-    res.send('🚀 Backend is running successfully on Vercel!');
-});
-
 
 // ✅ Login Route
 app.post('/login', async (req, res) => {
@@ -69,8 +67,14 @@ app.post('/login', async (req, res) => {
 
         res.json({ token, user: { name: user.name, email: user.email } });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: '❌ Internal Server Error' });
     }
+});
+
+// ✅ Health Check Route
+app.get('/', (req, res) => {
+    res.send('🚀 Backend is running successfully on Vercel!');
 });
 
 // ✅ Dynamic Port Listener
